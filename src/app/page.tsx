@@ -1,96 +1,202 @@
-import Link from "next/link";
-import { milestones } from "@/lib/analysis-content";
+"use client";
 
-export default function Home() {
-  const stack = [
-    "Next.js App Router",
-    "TypeScript",
-    "Tailwind CSS v4",
-    "ESLint and clean import aliases",
-  ];
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
+
+type SideActionProps = {
+  href: string;
+  label: string;
+  direction: "left" | "right";
+  isActive: boolean;
+  isInactive: boolean;
+  onHoverChange: (side: "left" | "right" | null) => void;
+};
+
+function SideAction({
+  href,
+  label,
+  direction,
+  isActive,
+  isInactive,
+  onHoverChange,
+}: SideActionProps) {
+  const isLeft = direction === "left";
+  const hoverTimeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current !== null) {
+        window.clearTimeout(hoverTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const queueHoverChange = (side: "left" | "right" | null) => {
+    if (hoverTimeoutRef.current !== null) {
+      window.clearTimeout(hoverTimeoutRef.current);
+    }
+
+    hoverTimeoutRef.current = window.setTimeout(() => {
+      onHoverChange(side);
+    }, side ? 90 : 110);
+  };
 
   return (
-    <main className="mx-auto flex min-h-[calc(100vh-64px)] w-full max-w-6xl flex-col px-6 py-10 sm:px-10 lg:px-12">
-      <section className="grid flex-1 items-center gap-10 lg:grid-cols-[1.2fr_0.8fr]">
-        <div className="space-y-8">
-          <div className="inline-flex items-center rounded-full border border-line bg-surface px-4 py-2 text-sm text-muted shadow-sm backdrop-blur">
-            Skinstric internship build workspace
-          </div>
+    <div
+      className={`absolute top-[11rem] z-30 hidden h-[37.625rem] w-[37.625rem] lg:block ${
+        isLeft ? "left-[-21.5rem]" : "right-[-21.5rem]"
+      } transition-all duration-[1450ms] ease-[cubic-bezier(0.19,1,0.22,1)] will-change-transform ${
+        isActive
+          ? isLeft
+            ? "translate-x-[1rem] opacity-100"
+            : "-translate-x-[1rem] opacity-100"
+          : isInactive
+            ? isLeft
+              ? "pointer-events-none -translate-x-[11rem] opacity-0"
+              : "pointer-events-none translate-x-[11rem] opacity-0"
+            : "translate-x-0 opacity-100"
+      }`}
+    >
+      <div
+        className={`absolute inset-0 rotate-45 border border-dashed border-[#A0A4AB]/35 transition-opacity duration-[1200ms] ease-[cubic-bezier(0.19,1,0.22,1)] ${
+          isInactive ? "opacity-0" : "opacity-100"
+        }`}
+      />
 
-          <div className="space-y-5">
-            <p className="text-sm font-medium uppercase tracking-[0.28em] text-accent-deep">
-              App foundation
-            </p>
-            <h1 className="max-w-3xl text-5xl font-semibold tracking-tight text-foreground sm:text-6xl">
-              A clean starting point for the camera-to-results experience.
-            </h1>
-            <p className="max-w-2xl text-lg leading-8 text-muted">
-              The starter template has been replaced with a focused project shell
-              so we can move straight into building the onboarding, capture, and
-              results flows from your Figma and reference site.
-            </p>
-          </div>
+      <div
+        className={`absolute top-1/2 z-10 flex h-11 w-[9.375rem] -translate-y-1/2 items-center gap-4 text-[10px] font-medium uppercase tracking-[-0.02em] text-black/70 transition-all duration-[1200ms] ease-[cubic-bezier(0.19,1,0.22,1)] will-change-transform ${
+          isLeft
+            ? "left-[calc(100%-4.5rem)]"
+            : "right-[calc(100%-4.5rem)] justify-end"
+        }`}
+      >
+        {isLeft ? (
+          <>
+            <div
+              className="flex h-[4.5rem] w-[4.5rem] shrink-0 items-center justify-center"
+              onMouseEnter={() => queueHoverChange(direction)}
+              onMouseLeave={() => queueHoverChange(null)}
+            >
+              <Link
+                href={href}
+                className="flex h-11 w-11 items-center justify-center border border-black/70 bg-background rotate-45"
+              >
+                <span className="-rotate-45 text-[12px] leading-none">
+                  &#9654;
+                </span>
+              </Link>
+            </div>
+            <span className="flex h-4 w-[90px] items-center">{label}</span>
+          </>
+        ) : (
+          <>
+            <span className="flex h-4 w-[90px] items-center justify-end">
+              {label}
+            </span>
+            <div
+              className="flex h-[4.5rem] w-[4.5rem] shrink-0 items-center justify-center"
+              onMouseEnter={() => queueHoverChange(direction)}
+              onMouseLeave={() => queueHoverChange(null)}
+            >
+              <Link
+                href={href}
+                className="flex h-11 w-11 items-center justify-center border border-black/70 bg-background rotate-45"
+              >
+                <span className="-rotate-45 text-[12px] leading-none">
+                  &#9654;
+                </span>
+              </Link>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
 
-          <div className="flex flex-wrap gap-4">
-            <Link
-              className="rounded-full bg-accent px-6 py-3 text-sm font-semibold text-white transition-transform duration-200 hover:-translate-y-0.5 hover:bg-accent-deep"
-              href="/analyze"
-            >
-              Start prototype flow
-            </Link>
-            <Link
-              className="rounded-full border border-line bg-surface px-6 py-3 text-sm font-semibold text-foreground backdrop-blur transition-colors hover:bg-white/90"
-              href="/results"
-            >
-              Jump to results
-            </Link>
-          </div>
+export default function Home() {
+  const [hoveredSide, setHoveredSide] = useState<"left" | "right" | null>(null);
+  const [titleVisible, setTitleVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setTitleVisible(true);
+    }, 160);
+
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  return (
+    <main className="relative min-h-[calc(100vh-64px)] overflow-hidden bg-background">
+      <SideAction
+        href="/results"
+        label="Discover A.I."
+        direction="left"
+        isActive={hoveredSide === "left"}
+        isInactive={hoveredSide === "right"}
+        onHoverChange={setHoveredSide}
+      />
+      <SideAction
+        href="/testing"
+        label="Take Test"
+        direction="right"
+        isActive={hoveredSide === "right"}
+        isInactive={hoveredSide === "left"}
+        onHoverChange={setHoveredSide}
+      />
+
+      <section className="relative z-10 flex min-h-[calc(100vh-64px)] flex-col items-center justify-center px-5 py-12 sm:px-8">
+        <div
+          className={`flex max-w-[42.5rem] flex-col items-center text-center transition-all duration-[1850ms] ease-[cubic-bezier(0.19,1,0.22,1)] will-change-transform lg:absolute lg:top-[22.5625rem] lg:w-[42.5rem] lg:-translate-y-1/2 ${
+            hoveredSide === "right"
+              ? "lg:left-[12%] lg:items-start lg:text-left"
+              : hoveredSide === "left"
+                ? "lg:right-[12%] lg:items-end lg:text-right"
+                : "lg:left-1/2 lg:-translate-x-1/2"
+          } ${titleVisible ? "opacity-100" : "opacity-0"}`}
+        >
+          <h1 className="text-[clamp(3.5rem,10vw,8rem)] font-light leading-[0.94] tracking-[-0.07em] text-[#1A1B1C] transition-opacity duration-[2200ms] ease-[cubic-bezier(0.19,1,0.22,1)] lg:w-[42.5rem] lg:text-[128px] lg:leading-[120px]">
+            Sophisticated
+            <br />
+            skincare
+          </h1>
+
         </div>
 
-        <div className="rounded-[2rem] border border-line bg-surface p-6 shadow-[0_20px_70px_rgba(138,63,46,0.12)] backdrop-blur">
-          <div className="rounded-[1.5rem] bg-surface-strong p-6">
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-accent-deep">
-              First build targets
-            </p>
-            <ul className="mt-5 space-y-4">
-              {milestones.map((item) => (
-                <li
-                  key={item}
-                  className="rounded-2xl border border-line bg-white/70 px-4 py-4 text-sm leading-6 text-foreground"
-                >
-                  {item}
-                </li>
-              ))}
-            </ul>
+        <div className="absolute bottom-5 left-5 max-w-[17rem] text-[10px] uppercase leading-[1.6] tracking-[-0.02em] text-[#1A1B1C] sm:bottom-6 sm:left-8 lg:bottom-4 lg:left-5">
+          <p>Skinstric developed an A.I. that creates</p>
+          <p>a highly-personalized routine tailored to</p>
+          <p>what your skin needs.</p>
+        </div>
 
-            <div className="mt-6 rounded-2xl bg-[#fff4eb] p-5">
-              <p className="text-sm font-semibold text-accent-deep">Scaffold choices</p>
-              <ul className="mt-3 space-y-2 text-sm text-muted">
-                {stack.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
+        <div className="absolute inset-x-2 bottom-20 flex items-center justify-between gap-4 text-[10px] font-medium uppercase tracking-[-0.02em] text-black/70 sm:inset-x-4 lg:hidden">
+          <Link
+            href="/results"
+            className="flex h-11 min-w-0 items-center gap-3"
+            onMouseEnter={() => setHoveredSide("left")}
+            onMouseLeave={() => setHoveredSide(null)}
+          >
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center border border-black/70 rotate-45">
+              <span className="-rotate-45 text-[16px] leading-none">
+                &rsaquo;
+              </span>
+            </span>
+            <span className="truncate">Discover A.I.</span>
+          </Link>
 
-            <div className="mt-6 flex flex-wrap gap-3 text-sm font-semibold">
-              <a
-                href="https://skinstric-wandag.vercel.app/"
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-full border border-line bg-white/70 px-4 py-2 text-foreground"
-              >
-                Reference site
-              </a>
-              <a
-                href="https://www.figma.com/design/K43I2D7c3xgt1ZiF6lY1Yq/Skinstric?node-id=12-15671&t=lTlbWTL8Nw9jLWHZ-0"
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-full border border-line bg-white/70 px-4 py-2 text-foreground"
-              >
-                Figma file
-              </a>
-            </div>
-          </div>
+          <Link
+            href="/testing"
+            className="flex h-11 min-w-0 items-center justify-end gap-3 text-right"
+            onMouseEnter={() => setHoveredSide("right")}
+            onMouseLeave={() => setHoveredSide(null)}
+          >
+            <span className="truncate">Take Test</span>
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center border border-black/70 rotate-45">
+              <span className="-rotate-45 text-[16px] leading-none">
+                &lsaquo;
+              </span>
+            </span>
+          </Link>
         </div>
       </section>
     </main>

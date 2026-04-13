@@ -8,7 +8,7 @@ export default function CapturePage() {
       title="Capture and confirm the user photo."
       description="This page stands in for the camera experience. It gives us a place to build the screenshot confirmation interactions you mentioned in your EOD notes."
       primaryCta={{ href: "/results", label: "Use sample result" }}
-      secondaryCta={{ href: "/analyze", label: "Back to intro" }}
+      secondaryCta={{ href: "/testing", label: "Back to intro" }}
     >
       <div className="space-y-5 rounded-[1.5rem] bg-surface-strong p-6">
         <div className="rounded-[1.75rem] border border-dashed border-line bg-[linear-gradient(180deg,#f8e8dc_0%,#fdf8f3_100%)] p-5">
