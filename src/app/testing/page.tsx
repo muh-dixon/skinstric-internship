@@ -1,14 +1,13 @@
 "use client";
 
 import AOS from "aos";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 type TestingStep = "name" | "location";
 type TestingPhase = "input" | "processing" | "complete";
 
 export default function TestingPage() {
-  const searchParams = useSearchParams();
   const [step, setStep] = useState<TestingStep>("name");
   const [phase, setPhase] = useState<TestingPhase>("input");
   const [name, setName] = useState("");
@@ -18,7 +17,7 @@ export default function TestingPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const requestedStep = searchParams.get("step");
+    const requestedStep = new URLSearchParams(window.location.search).get("step");
 
     if (requestedStep === "location") {
       const savedName = window.localStorage.getItem("skinstric.userName") ?? "";
@@ -28,7 +27,7 @@ export default function TestingPage() {
       setPhase("input");
       setStep("location");
     }
-  }, [searchParams]);
+  }, []);
 
   useEffect(() => {
     if (phase === "input") {
