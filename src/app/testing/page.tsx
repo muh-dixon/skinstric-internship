@@ -7,23 +7,70 @@ import { useEffect, useRef, useState } from "react";
 type TestingStep = "name" | "location";
 type TestingPhase = "input" | "processing" | "complete";
 
+const PHASE_ONE_ENDPOINT =
+  "https://us-central1-api-skinstric-ai.cloudfunctions.net/skinstricPhaseOne";
+const NAME_PATTERN = /^[A-Za-z]+(?:[ '-][A-Za-z]+)*$/;
+const LOCATION_PATTERN = /^[A-Za-z]+(?:[A-Za-z\s,.'-]*[A-Za-z])?$/;
+
+function normalizeInput(value: string) {
+  return value.replace(/\s+/g, " ").trim();
+}
+
+function validateStepValue(step: TestingStep, value: string) {
+  const normalizedValue = normalizeInput(value);
+
+  if (!normalizedValue) {
+    return {
+      valid: false,
+      message:
+        step === "name"
+          ? "Please enter your name to continue."
+          : "Please enter your location to continue.",
+      normalizedValue,
+    };
+  }
+
+  const pattern = step === "name" ? NAME_PATTERN : LOCATION_PATTERN;
+
+  if (!pattern.test(normalizedValue)) {
+    return {
+      valid: false,
+      message:
+        step === "name"
+          ? "Name should only include letters, spaces, apostrophes, or hyphens."
+          : "Location should only include letters and standard punctuation.",
+      normalizedValue,
+    };
+  }
+
+  return { valid: true, message: "", normalizedValue };
+}
+
 export default function TestingPage() {
   const [step, setStep] = useState<TestingStep>("name");
   const [phase, setPhase] = useState<TestingPhase>("input");
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
   const [isFocused, setIsFocused] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
   useEffect(() => {
     const requestedStep = new URLSearchParams(window.location.search).get("step");
+    const savedName = window.localStorage.getItem("skinstric.userName") ?? "";
+    const savedLocation =
+      window.localStorage.getItem("skinstric.userLocation") ?? "";
+
+    if (savedName) {
+      setName(savedName);
+    }
+
+    if (savedLocation) {
+      setLocation(savedLocation);
+    }
 
     if (requestedStep === "location") {
-      const savedName = window.localStorage.getItem("skinstric.userName") ?? "";
-      if (savedName) {
-        setName(savedName);
-      }
       setPhase("input");
       setStep("location");
     }
@@ -53,7 +100,7 @@ export default function TestingPage() {
 
   const value = step === "name" ? name : location;
   const setValue = step === "name" ? setName : setLocation;
-  const hasValue = value.trim().length > 0;
+  const hasValue = normalizeInput(value).length > 0;
 
   const stepContent =
     step === "name"
@@ -68,23 +115,59 @@ export default function TestingPage() {
           maxLength: 32,
         };
 
-  const handleContinue = () => {
-    const trimmedValue = value.trim();
+  const submitPhaseOne = async (submittedName: string, submittedLocation: string) => {
+    const response = await fetch(PHASE_ONE_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: submittedName,
+        location: submittedLocation,
+      }),
+    });
 
-    if (!trimmedValue) {
+    if (!response.ok) {
+      throw new Error("Phase 1 submission failed.");
+    }
+  };
+
+  const handleContinue = async () => {
+    const validation = validateStepValue(step, value);
+
+    if (!validation.valid) {
+      setErrorMessage(validation.message);
       inputRef.current?.focus();
       return;
     }
 
+    setErrorMessage("");
+
     if (step === "name") {
-      window.localStorage.setItem("skinstric.userName", trimmedValue);
+      setName(validation.normalizedValue);
+      window.localStorage.setItem("skinstric.userName", validation.normalizedValue);
       setStep("location");
       return;
     }
 
-    window.localStorage.setItem("skinstric.userLocation", trimmedValue);
+    const normalizedLocation = validation.normalizedValue;
+    const normalizedName = normalizeInput(name);
+
+    setLocation(normalizedLocation);
+    window.localStorage.setItem("skinstric.userLocation", normalizedLocation);
     setIsFocused(false);
     setPhase("processing");
+
+    try {
+      await submitPhaseOne(normalizedName, normalizedLocation);
+    } catch {
+      setPhase("input");
+      setErrorMessage(
+        "We couldn't save your details just yet. Please try again.",
+      );
+      inputRef.current?.focus();
+      return;
+    }
   };
 
   const handleBack = () => {
@@ -154,11 +237,16 @@ export default function TestingPage() {
                   ref={inputRef}
                   type="text"
                   value={value}
-                  onChange={(event) => setValue(event.target.value)}
+                  onChange={(event) => {
+                    setValue(event.target.value);
+                    if (errorMessage) {
+                      setErrorMessage("");
+                    }
+                  }}
                   onKeyDown={(event) => {
                     if (event.key === "Enter") {
                       event.preventDefault();
-                      handleContinue();
+                      void handleContinue();
                     }
                   }}
                   onFocus={() => setIsFocused(true)}
@@ -170,6 +258,12 @@ export default function TestingPage() {
                 />
               </div>
             </button>
+
+            {errorMessage ? (
+              <p className="mt-3 text-center text-[0.72rem] uppercase tracking-[-0.02em] text-[#8B3A3A] sm:text-[0.78rem]">
+                {errorMessage}
+              </p>
+            ) : null}
           </div>
         ) : null}
 
@@ -206,7 +300,7 @@ export default function TestingPage() {
         ) : null}
       </section>
 
-      <div className="mt-4 flex items-center justify-between gap-4 md:absolute md:bottom-8 md:left-5 md:right-5 md:mt-0 md:justify-start md:gap-0 md:sm:left-8 md:sm:right-8">
+      <div className="mt-4 flex items-center justify-between gap-4 md:absolute md:bottom-8 md:left-8 md:right-8 md:mt-0 md:justify-start md:gap-0">
         <button
           data-aos="fade-right"
           data-aos-duration="900"

@@ -63,12 +63,21 @@ function DemographicsExperience({ data }: { data: PhaseTwoData }) {
     [data],
   );
 
+  const defaultSelections = useMemo(
+    () => ({
+      race: ranked.race[0]?.rawLabel ?? "",
+      age: ranked.age[0]?.rawLabel ?? "",
+      gender: ranked.gender[0]?.rawLabel ?? "",
+    }),
+    [ranked],
+  );
   const [activeTab, setActiveTab] = useState<DemographicTab>("race");
-  const [selectedRawLabel, setSelectedRawLabel] = useState<string>(
-    ranked.race[0]?.rawLabel ?? "",
+  const [actualSelections, setActualSelections] = useState<Record<DemographicTab, string>>(
+    defaultSelections,
   );
 
   const selectedList = ranked[activeTab];
+  const selectedRawLabel = actualSelections[activeTab] || defaultSelections[activeTab];
   const selectedItem =
     selectedList.find((item) => item.rawLabel === selectedRawLabel) ??
     selectedList[0];
@@ -101,7 +110,6 @@ function DemographicsExperience({ data }: { data: PhaseTwoData }) {
                 type="button"
                 onClick={() => {
                   setActiveTab(tabKey);
-                  setSelectedRawLabel(ranked[tabKey][0]?.rawLabel ?? "");
                 }}
                 className={`flex min-h-[5.4rem] w-full flex-col justify-between border border-[#1A1B1C] px-3 py-2.5 text-left transition-colors duration-300 ease-out sm:min-h-[6rem] sm:px-4 sm:py-3 xl:h-[6.5rem] ${
                   isActive
@@ -110,7 +118,13 @@ function DemographicsExperience({ data }: { data: PhaseTwoData }) {
                 }`}
               >
                 <span className="text-[0.82rem] font-semibold uppercase tracking-[-0.03em] sm:text-[0.9rem] xl:text-[0.98rem]">
-                  {topItem?.label ?? "N/A"}
+                  {ranked[tabKey].find(
+                    (item) =>
+                      item.rawLabel ===
+                      (actualSelections[tabKey] || defaultSelections[tabKey]),
+                  )?.label ??
+                    topItem?.label ??
+                    "N/A"}
                 </span>
                 <span className="text-[0.8rem] font-semibold uppercase tracking-[-0.03em] sm:text-[0.88rem] xl:text-[0.95rem]">
                   {TAB_LABELS[tabKey]}
@@ -188,7 +202,12 @@ function DemographicsExperience({ data }: { data: PhaseTwoData }) {
                 <button
                   key={`${activeTab}-${item.rawLabel}`}
                   type="button"
-                  onClick={() => setSelectedRawLabel(item.rawLabel)}
+                  onClick={() =>
+                    setActualSelections((current) => ({
+                      ...current,
+                      [activeTab]: item.rawLabel,
+                    }))
+                  }
                   className={`flex w-full items-center justify-between px-3 py-2.5 text-left transition-colors duration-250 ease-out sm:px-4 sm:py-3 ${
                     isSelected
                       ? "bg-[#1A1B1C] text-white"
