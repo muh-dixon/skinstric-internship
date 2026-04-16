@@ -1,12 +1,14 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import AOS from "aos";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 type TestingStep = "name" | "location";
 type TestingPhase = "input" | "processing" | "complete";
 
 export default function TestingPage() {
+  const searchParams = useSearchParams();
   const [step, setStep] = useState<TestingStep>("name");
   const [phase, setPhase] = useState<TestingPhase>("input");
   const [name, setName] = useState("");
@@ -14,6 +16,19 @@ export default function TestingPage() {
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const requestedStep = searchParams.get("step");
+
+    if (requestedStep === "location") {
+      const savedName = window.localStorage.getItem("skinstric.userName") ?? "";
+      if (savedName) {
+        setName(savedName);
+      }
+      setPhase("input");
+      setStep("location");
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (phase === "input") {
@@ -32,6 +47,10 @@ export default function TestingPage() {
 
     return () => window.clearTimeout(timer);
   }, [phase]);
+
+  useEffect(() => {
+    AOS.refreshHard();
+  }, [phase, step]);
 
   const value = step === "name" ? name : location;
   const setValue = step === "name" ? setName : setLocation;
@@ -95,8 +114,12 @@ export default function TestingPage() {
   };
 
   return (
-    <main className="relative min-h-[calc(100vh-64px)] overflow-hidden bg-background px-5 py-6 sm:px-8">
-      <p className="text-[clamp(1rem,1vw,1.25rem)] font-semibold uppercase tracking-[-0.03em] text-[#1A1B1C]">
+    <main className="relative min-h-[calc(100vh-56px)] overflow-hidden bg-background px-5 py-6 sm:px-8">
+      <p
+        data-aos="fade-down"
+        data-aos-duration="900"
+        className="text-[clamp(1rem,1vw,1.25rem)] font-semibold uppercase tracking-[-0.03em] text-[#1A1B1C]"
+      >
         To start analysis
       </p>
 
@@ -109,7 +132,11 @@ export default function TestingPage() {
         </div>
 
         {phase === "input" ? (
-          <div className="relative z-10 flex w-full max-w-[570px] flex-col items-center text-center">
+          <div
+            data-aos="zoom-in"
+            data-aos-duration="1100"
+            className="relative z-10 flex w-full max-w-[570px] flex-col items-center text-center"
+          >
             <p
               className={`mb-3 text-[clamp(0.75rem,1.05vw,1.5rem)] font-light uppercase tracking-[-0.03em] transition-colors duration-300 ${
                 isFocused || hasValue ? "text-[#0f1011]" : "text-[#0f1011]"
@@ -148,7 +175,11 @@ export default function TestingPage() {
         ) : null}
 
         {phase === "processing" ? (
-          <div className="relative z-10 flex flex-col items-center text-center">
+          <div
+            data-aos="fade-up"
+            data-aos-duration="900"
+            className="relative z-10 flex flex-col items-center text-center"
+          >
             <p className="text-[clamp(1.4rem,2vw,2.2rem)] font-light tracking-[-0.04em] text-[#667085]">
               Processing submission
             </p>
@@ -161,7 +192,11 @@ export default function TestingPage() {
         ) : null}
 
         {phase === "complete" ? (
-          <div className="relative z-10 flex flex-col items-center text-center">
+          <div
+            data-aos="fade-up"
+            data-aos-duration="1000"
+            className="relative z-10 flex flex-col items-center text-center"
+          >
             <p className="text-[clamp(2.2rem,3vw,3.2rem)] font-light tracking-[-0.05em] text-[#1A1B1C]">
               Thank you!
             </p>
@@ -173,11 +208,13 @@ export default function TestingPage() {
       </section>
 
       <button
+        data-aos="fade-right"
+        data-aos-duration="900"
         type="button"
         onClick={handleBack}
-        className="absolute bottom-8 left-5 inline-flex items-center gap-5 text-[clamp(1rem,1.2vw,1.5rem)] font-semibold uppercase tracking-[-0.03em] text-[#1A1B1C] sm:left-8"
+        className="absolute bottom-8 left-5 inline-flex items-center gap-5 text-[clamp(1rem,1.2vw,1.5rem)] font-semibold uppercase tracking-[-0.03em] text-[#1A1B1C] transition-all duration-300 ease-out hover:text-black/70 sm:left-8"
       >
-        <span className="flex h-[3rem] w-[3rem] items-center justify-center border border-black/70 rotate-45">
+        <span className="flex h-[3rem] w-[3rem] items-center justify-center border border-black/70 rotate-45 transition-all duration-300 ease-out hover:scale-[1.04] hover:border-black">
           <span className="-rotate-45 text-[1.1rem] leading-none">&#9664;</span>
         </span>
         <span>Back</span>
@@ -185,12 +222,14 @@ export default function TestingPage() {
 
       {phase === "complete" ? (
         <button
+          data-aos="fade-left"
+          data-aos-duration="900"
           type="button"
           onClick={handleProceed}
-          className="absolute bottom-8 right-5 inline-flex items-center gap-5 text-[clamp(1rem,1.2vw,1.5rem)] font-semibold uppercase tracking-[-0.03em] text-[#1A1B1C] sm:right-8"
+          className="absolute bottom-8 right-5 inline-flex items-center gap-5 text-[clamp(1rem,1.2vw,1.5rem)] font-semibold uppercase tracking-[-0.03em] text-[#1A1B1C] transition-all duration-300 ease-out hover:text-black/70 sm:right-8"
         >
           <span>Proceed</span>
-          <span className="flex h-[3rem] w-[3rem] items-center justify-center border border-black/70 rotate-45">
+          <span className="flex h-[3rem] w-[3rem] items-center justify-center border border-black/70 rotate-45 transition-all duration-300 ease-out hover:scale-[1.04] hover:border-black">
             <span className="-rotate-45 text-[1.1rem] leading-none">&#9654;</span>
           </span>
         </button>

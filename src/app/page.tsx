@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 
 type SideActionProps = {
@@ -38,36 +39,54 @@ function SideAction({
 
     hoverTimeoutRef.current = window.setTimeout(() => {
       onHoverChange(side);
-    }, side ? 90 : 110);
+    }, side ? 150 : 210);
   };
 
   return (
-    <div
-      className={`absolute top-[11rem] z-30 hidden h-[37.625rem] w-[37.625rem] lg:block ${
+      <div
+        className={`absolute top-[11rem] z-30 hidden h-[37.625rem] w-[37.625rem] lg:block ${
         isLeft ? "left-[-21.5rem]" : "right-[-21.5rem]"
-      } transition-all duration-[1450ms] ease-[cubic-bezier(0.19,1,0.22,1)] will-change-transform ${
+      } transition-[transform,opacity] duration-[2800ms] ease-[cubic-bezier(0.16,0.92,0.24,1)] will-change-transform ${
         isActive
           ? isLeft
-            ? "translate-x-[1rem] opacity-100"
-            : "-translate-x-[1rem] opacity-100"
+            ? "translate-x-[0.4rem] opacity-100"
+            : "-translate-x-[0.4rem] opacity-100"
           : isInactive
             ? isLeft
-              ? "pointer-events-none -translate-x-[11rem] opacity-0"
-              : "pointer-events-none translate-x-[11rem] opacity-0"
+              ? "pointer-events-none -translate-x-[7.5rem] opacity-0"
+              : "pointer-events-none translate-x-[7.5rem] opacity-0"
             : "translate-x-0 opacity-100"
       }`}
     >
       <div
-        className={`absolute inset-0 rotate-45 border border-dashed border-[#A0A4AB]/35 transition-opacity duration-[1200ms] ease-[cubic-bezier(0.19,1,0.22,1)] ${
-          isInactive ? "opacity-0" : "opacity-100"
+        className={`absolute inset-0 rotate-45 border border-dashed border-[#A0A4AB]/35 transition-[transform,opacity] duration-[2550ms] ease-[cubic-bezier(0.16,0.92,0.24,1)] ${
+          isActive
+            ? isLeft
+              ? "translate-x-[0.25rem] opacity-100"
+              : "-translate-x-[0.25rem] opacity-100"
+            : isInactive
+              ? isLeft
+                ? "-translate-x-[2.25rem] opacity-0"
+                : "translate-x-[2.25rem] opacity-0"
+              : "translate-x-0 opacity-100"
         }`}
       />
 
       <div
-        className={`absolute top-1/2 z-10 flex h-11 w-[9.375rem] -translate-y-1/2 items-center gap-4 text-[10px] font-medium uppercase tracking-[-0.02em] text-black/70 transition-all duration-[1200ms] ease-[cubic-bezier(0.19,1,0.22,1)] will-change-transform ${
+        className={`absolute top-1/2 z-10 flex h-11 w-[9.375rem] -translate-y-1/2 items-center gap-4 text-[10px] font-medium uppercase tracking-[-0.02em] text-black/70 transition-[transform,opacity] duration-[2400ms] ease-[cubic-bezier(0.16,0.92,0.24,1)] will-change-transform ${
           isLeft
             ? "left-[calc(100%-4.5rem)]"
             : "right-[calc(100%-4.5rem)] justify-end"
+        } ${
+          isActive
+            ? isLeft
+              ? "translate-x-[0.2rem] opacity-100"
+              : "-translate-x-[0.2rem] opacity-100"
+            : isInactive
+              ? isLeft
+                ? "-translate-x-[1.85rem] opacity-0"
+                : "translate-x-[1.85rem] opacity-0"
+              : "translate-x-0 opacity-100"
         }`}
       >
         {isLeft ? (
@@ -117,6 +136,13 @@ function SideAction({
 export default function Home() {
   const [hoveredSide, setHoveredSide] = useState<"left" | "right" | null>(null);
   const [titleVisible, setTitleVisible] = useState(false);
+  const containerX =
+    hoveredSide === "right" ? -235 : hoveredSide === "left" ? 235 : 0;
+
+  const topLineX =
+    hoveredSide === "right" ? -26 : hoveredSide === "left" ? 26 : 0;
+  const bottomLineX =
+    hoveredSide === "right" ? -44 : hoveredSide === "left" ? 44 : 0;
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -127,7 +153,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="relative min-h-[calc(100vh-64px)] overflow-hidden bg-background">
+    <main className="relative min-h-[calc(100vh-56px)] overflow-hidden bg-background">
       <SideAction
         href="/results"
         label="Discover A.I."
@@ -145,23 +171,69 @@ export default function Home() {
         onHoverChange={setHoveredSide}
       />
 
-      <section className="relative z-10 flex min-h-[calc(100vh-64px)] flex-col items-center justify-center px-5 py-12 sm:px-8">
-        <div
-          className={`flex max-w-[42.5rem] flex-col items-center text-center transition-all duration-[1850ms] ease-[cubic-bezier(0.19,1,0.22,1)] will-change-transform lg:absolute lg:top-[22.5625rem] lg:w-[42.5rem] lg:-translate-y-1/2 ${
+      <section className="relative z-10 flex min-h-[calc(100vh-56px)] flex-col items-center justify-center px-5 py-12 sm:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 18, x: 0 }}
+          animate={{
+            opacity: titleVisible ? 1 : 0,
+            y: titleVisible ? 0 : 18,
+            x: containerX,
+          }}
+          transition={{
+            opacity: { duration: 1.15, ease: [0.22, 1, 0.36, 1] },
+            y: { duration: 1.15, ease: [0.22, 1, 0.36, 1] },
+            x:
+              hoveredSide === null
+                ? {
+                    type: "spring",
+                    stiffness: 34,
+                    damping: 24,
+                    mass: 1.9,
+                  }
+                : {
+                    type: "spring",
+                    stiffness: 44,
+                    damping: 28,
+                    mass: 1.5,
+                  },
+          }}
+          className={`flex max-w-[42.5rem] flex-col items-center text-center will-change-transform lg:absolute lg:left-1/2 lg:top-[22.5625rem] lg:w-[42.5rem] ${
             hoveredSide === "right"
-              ? "lg:left-[12%] lg:items-start lg:text-left"
+              ? "lg:-translate-x-1/2 lg:-translate-y-1/2 lg:items-start lg:text-left"
               : hoveredSide === "left"
-                ? "lg:right-[12%] lg:items-end lg:text-right"
-                : "lg:left-1/2 lg:-translate-x-1/2"
-          } ${titleVisible ? "opacity-100" : "opacity-0"}`}
+                ? "lg:-translate-x-1/2 lg:-translate-y-1/2 lg:items-end lg:text-right"
+                : "lg:-translate-x-1/2 lg:-translate-y-1/2"
+          }`}
         >
-          <h1 className="text-[clamp(3.5rem,10vw,8rem)] font-light leading-[0.94] tracking-[-0.07em] text-[#1A1B1C] transition-opacity duration-[2200ms] ease-[cubic-bezier(0.19,1,0.22,1)] lg:w-[42.5rem] lg:text-[128px] lg:leading-[120px]">
-            Sophisticated
-            <br />
-            skincare
+          <h1 className="text-[clamp(3.5rem,10vw,8rem)] font-light leading-[0.94] tracking-[-0.07em] text-[#1A1B1C] lg:w-[42.5rem] lg:text-[128px] lg:leading-[120px]">
+            <motion.span
+              className="block will-change-transform"
+              animate={{ x: topLineX }}
+              transition={{
+                type: "spring",
+                stiffness: 44,
+                damping: 26,
+                mass: 1.45,
+              }}
+            >
+              Sophisticated
+            </motion.span>
+            <motion.span
+              className="block will-change-transform"
+              animate={{ x: bottomLineX }}
+              transition={{
+                type: "spring",
+                stiffness: 38,
+                damping: 28,
+                mass: 1.7,
+                delay: hoveredSide ? 0.16 : 0.04,
+              }}
+            >
+              skincare
+            </motion.span>
           </h1>
 
-        </div>
+        </motion.div>
 
         <div className="absolute bottom-5 left-5 max-w-[17rem] text-[10px] uppercase leading-[1.6] tracking-[-0.02em] text-[#1A1B1C] sm:bottom-6 sm:left-8 lg:bottom-4 lg:left-5">
           <p>Skinstric developed an A.I. that creates</p>

@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export function SiteHeader() {
   return (
-    <header className="h-16 w-full bg-background">
+    <header className="h-14 w-full bg-background">
       <div className="mx-auto flex h-full w-full max-w-[1920px] items-center justify-between px-5 sm:px-7 xl:px-8">
         <div className="flex items-center gap-4 sm:gap-6">
           <Link
@@ -19,12 +19,14 @@ export function SiteHeader() {
           </div>
         </div>
 
-        <Link
-          href="/testing"
-          className="inline-flex h-8 items-center justify-center bg-[#1A1B1C] px-4 text-[9px] font-semibold uppercase leading-4 tracking-[-0.02em] !text-[#FCFCFC] sm:text-[10px]"
+        <button
+          type="button"
+          disabled
+          aria-disabled="true"
+          className="inline-flex h-7 cursor-not-allowed items-center justify-center bg-[#1A1B1C] px-3.5 text-[9px] font-semibold uppercase leading-4 tracking-[-0.02em] text-[#FCFCFC] opacity-55 sm:text-[10px]"
         >
           Enter code
-        </Link>
+        </button>
       </div>
     </header>
   );

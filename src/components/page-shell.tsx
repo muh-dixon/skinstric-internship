@@ -25,7 +25,7 @@ export function PageShell({
   secondaryCta,
 }: PageShellProps) {
   return (
-    <main className="mx-auto flex min-h-[calc(100vh-64px)] w-full max-w-6xl flex-col px-6 py-10 sm:px-10 lg:px-12">
+    <main className="mx-auto flex min-h-[calc(100vh-56px)] w-full max-w-6xl flex-col px-6 py-10 sm:px-10 lg:px-12">
       <section className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
         <div className="space-y-6">
           <div className="inline-flex items-center rounded-full border border-line bg-surface px-4 py-2 text-sm text-muted">

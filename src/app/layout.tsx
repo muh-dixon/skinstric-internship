@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { AOSProvider } from "@/components/aos-provider";
 import { SiteHeader } from "@/components/site-header";
 import "./globals.css";
 
@@ -29,8 +30,10 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-background text-foreground font-sans flex flex-col">
-        <SiteHeader />
-        {children}
+        <AOSProvider>
+          <SiteHeader />
+          {children}
+        </AOSProvider>
       </body>
     </html>
   );
