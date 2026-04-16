@@ -171,7 +171,7 @@ export default function Home() {
         onHoverChange={setHoveredSide}
       />
 
-      <section className="relative z-10 flex min-h-[calc(100vh-56px)] flex-col items-center justify-center px-5 py-12 sm:px-8">
+      <section className="relative z-10 flex min-h-[calc(100vh-56px)] flex-col items-center justify-center px-4 py-10 sm:px-6 md:px-8 md:py-12">
         <motion.div
           initial={{ opacity: 0, y: 18, x: 0 }}
           animate={{
@@ -205,7 +205,7 @@ export default function Home() {
                 : "lg:-translate-x-1/2 lg:-translate-y-1/2"
           }`}
         >
-          <h1 className="text-[clamp(3.5rem,10vw,8rem)] font-light leading-[0.94] tracking-[-0.07em] text-[#1A1B1C] lg:w-[42.5rem] lg:text-[128px] lg:leading-[120px]">
+          <h1 className="text-[clamp(2.6rem,15vw,8rem)] font-light leading-[0.94] tracking-[-0.07em] text-[#1A1B1C] lg:w-[42.5rem] lg:text-[128px] lg:leading-[120px]">
             <motion.span
               className="block will-change-transform"
               animate={{ x: topLineX }}
@@ -235,21 +235,21 @@ export default function Home() {
 
         </motion.div>
 
-        <div className="absolute bottom-5 left-5 max-w-[17rem] text-[10px] uppercase leading-[1.6] tracking-[-0.02em] text-[#1A1B1C] sm:bottom-6 sm:left-8 lg:bottom-4 lg:left-5">
+        <div className="absolute bottom-4 left-4 max-w-[12rem] text-[9px] uppercase leading-[1.5] tracking-[-0.02em] text-[#1A1B1C] sm:bottom-5 sm:left-6 sm:max-w-[15rem] sm:text-[10px] lg:bottom-4 lg:left-5 lg:max-w-[17rem]">
           <p>Skinstric developed an A.I. that creates</p>
           <p>a highly-personalized routine tailored to</p>
           <p>what your skin needs.</p>
         </div>
 
-        <div className="absolute inset-x-2 bottom-20 flex items-center justify-between gap-4 text-[10px] font-medium uppercase tracking-[-0.02em] text-black/70 sm:inset-x-4 lg:hidden">
+        <div className="absolute inset-x-3 bottom-16 flex items-center justify-between gap-3 text-[9px] font-medium uppercase tracking-[-0.02em] text-black/70 sm:inset-x-4 sm:bottom-20 sm:gap-4 sm:text-[10px] lg:hidden">
           <Link
             href="/results"
-            className="flex h-11 min-w-0 items-center gap-3"
+            className="flex h-10 min-w-0 items-center gap-2.5 sm:h-11 sm:gap-3"
             onMouseEnter={() => setHoveredSide("left")}
             onMouseLeave={() => setHoveredSide(null)}
           >
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center border border-black/70 rotate-45">
-              <span className="-rotate-45 text-[16px] leading-none">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center border border-black/70 rotate-45 sm:h-11 sm:w-11">
+              <span className="-rotate-45 text-[14px] leading-none sm:text-[16px]">
                 &rsaquo;
               </span>
             </span>
@@ -258,13 +258,13 @@ export default function Home() {
 
           <Link
             href="/testing"
-            className="flex h-11 min-w-0 items-center justify-end gap-3 text-right"
+            className="flex h-10 min-w-0 items-center justify-end gap-2.5 text-right sm:h-11 sm:gap-3"
             onMouseEnter={() => setHoveredSide("right")}
             onMouseLeave={() => setHoveredSide(null)}
           >
             <span className="truncate">Take Test</span>
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center border border-black/70 rotate-45">
-              <span className="-rotate-45 text-[16px] leading-none">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center border border-black/70 rotate-45 sm:h-11 sm:w-11">
+              <span className="-rotate-45 text-[14px] leading-none sm:text-[16px]">
                 &lsaquo;
               </span>
             </span>
