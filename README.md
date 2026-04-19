@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Skinstric Internship Project
+
+A polished Next.js 16 app built as a skincare analysis experience for the Skinstric internship.
+
+The app includes an onboarding flow, camera/gallery capture, A.I. analysis cards, and interactive results detail pages.
+
+## Key Features
+
+- Animated landing experience with directional navigation.
+- Onboarding flow that collects user name and location.
+- Camera and gallery capture step for image-based analysis.
+- Results dashboard with A.I. analysis categories:
+  - Demographics
+  - Skin type details
+  - Cosmetic concerns
+  - Weather context
+- Detailed demographic review page with confidence ranking and editable selections.
+- Local storage persistence for user name, location, and phase two analysis results.
+
+## Tech Stack
+
+- Next.js 16.2.3
+- React 19.2.4
+- TypeScript
+- Tailwind CSS 4
+- AOS for scroll animations
+- `motion` for animated transitions
+
+## Project Structure
+
+- `src/app/`
+  - `page.tsx` — main landing page
+  - `testing/page.tsx` — onboarding prompt flow
+  - `capture/page.tsx` — user image capture and confirmation
+  - `results/page.tsx` — analysis dashboard
+  - `results/[category]/page.tsx` — detail views for category insights
+- `src/components/`
+  - `site-header.tsx` — top navigation and branding
+  - `aos-provider.tsx` — AOS initialization wrapper
+- `src/lib/analysis-content.ts` — analysis data modeling, storage helpers, and fallback AI content
 
 ## Getting Started
 
-First, run the development server:
+### Install dependencies
+
+```bash
+npm install
+```
+
+### Run development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000` in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Build for production
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+```
 
-## Learn More
+### Start production server
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run start
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Lint the code
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm run lint
+```
 
-## Deploy on Vercel
+## Notes
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- The app is built using client-side React for interactive flows.
+- The testing flow uses an external API endpoint for phase 1 submission.
+- Image capture uses browser camera and file input support.
+- Local storage keys are defined in `src/lib/analysis-content.ts`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Customization
+
+To adjust analysis content or fallback data, update `src/lib/analysis-content.ts`.
+
+To change visual styling, modify `src/app/globals.css` and Tailwind utility classes in component files.
