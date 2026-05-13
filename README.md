@@ -9,9 +9,9 @@ Skinstric AI Skincare Analysis is an interactive web app for users who want a gu
 
 ### Live Walkthrough
 
-[Watch the demo video](docs/assets/demo/skincare-demo.mp4)
+![Skinstric app walkthrough](docs/assets/demo/skincare-demo.gif)
 
-> GIF placeholder: add an optimized walkthrough GIF at `docs/assets/demo/skincare-demo.gif` if a lightweight animated preview is needed for the README.
+[Watch the full demo video](docs/assets/demo/skincare-demo.mp4)
 
 ### App Screens
 
@@ -136,7 +136,7 @@ npm run lint
 
 - Move external API endpoint URLs into environment variables.
 - Add automated tests for validation, result parsing, and route behavior.
-- Add a lighter optimized GIF preview for the README.
+- Add more focused automated coverage around the camera and upload flow.
 - Improve error states for unavailable camera permissions and failed API responses.
 - Expand the result detail pages for skin type, cosmetic concerns, and weather.
 - Add accessibility passes for keyboard focus order and screen reader labels.
