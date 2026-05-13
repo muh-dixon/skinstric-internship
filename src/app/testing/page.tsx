@@ -47,10 +47,7 @@ function validateStepValue(step: TestingStep, value: string) {
 }
 
 export default function TestingPage() {
-  const [step, setStep] = useState<TestingStep>(() => {
-    const requestedStep = new URLSearchParams(window.location.search).get("step");
-    return requestedStep === "location" ? "location" : "name";
-  });
+  const [step, setStep] = useState<TestingStep>("name");
   const [phase, setPhase] = useState<TestingPhase>("input");
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
@@ -58,6 +55,14 @@ export default function TestingPage() {
   const [errorMessage, setErrorMessage] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const requestedStep = new URLSearchParams(window.location.search).get("step");
+
+    if (requestedStep === "location") {
+      setStep("location");
+    }
+  }, []);
 
   useEffect(() => {
     if (phase === "input") {
