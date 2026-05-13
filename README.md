@@ -11,7 +11,7 @@ Skinstric AI Skincare Analysis is an interactive web app for users who want a gu
 
 ![Skinstric app walkthrough](docs/assets/demo/skincare-demo.gif)
 
-[Watch the full demo video](docs/assets/demo/skincare-demo.mp4)
+[Watch the full walkthrough video](docs/assets/demo/skincare-demo.mp4)
 
 ### App Screens
 
